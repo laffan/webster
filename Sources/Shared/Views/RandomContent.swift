@@ -1,9 +1,10 @@
 import SwiftUI
 
 /// Random screen contents: shows one random definition with a shuffle control.
-/// Browsing here is intentionally ephemeral and does not record recents.
+/// Each word shown is recorded in the Random section of recents.
 struct RandomContent: View {
     @EnvironmentObject private var store: DictionaryStore
+    @EnvironmentObject private var recents: RecentsStore
     @State private var entry: DictionaryEntry?
 
     var body: some View {
@@ -14,7 +15,6 @@ struct RandomContent: View {
                 ContentUnavailableView("No word yet", systemImage: "shuffle")
             }
         }
-        .navigationTitle("Random")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -33,6 +33,8 @@ struct RandomContent: View {
     }
 
     private func shuffle() {
-        entry = store.randomEntry()
+        guard let next = store.randomEntry() else { return }
+        entry = next
+        recents.record(next.word, source: .random)
     }
 }

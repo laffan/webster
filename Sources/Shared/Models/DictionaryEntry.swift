@@ -11,12 +11,6 @@ struct DictionaryEntry: Identifiable, Hashable, Codable {
     let word: String
     let definition: String
 
-    /// Webster printed headwords in capitals (e.g. "SERENDIPITY").
-    var displayWord: String { word.uppercased() }
-
-    /// Capitalized form for list rows and navigation titles (e.g. "Serendipity").
-    var title: String {
-        guard let first = word.first else { return word }
-        return first.uppercased() + word.dropFirst()
-    }
+    /// Title-cased headword for display (e.g. "Serendipity", "The Gapes").
+    var titleCased: String { word.capitalized }
 }

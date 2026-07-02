@@ -5,39 +5,49 @@ import SwiftUI
 struct DefinitionBody: View {
     let entry: DictionaryEntry
 
+    #if os(watchOS)
+    // On the Watch the headword only needs to be a touch larger than body text.
+    private let headwordFont: Font = .system(.headline, design: .serif)
+    #else
+    private let headwordFont: Font = .system(.title, design: .serif)
+    #endif
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                Text(entry.displayWord)
-                    .font(.system(.title, design: .serif).weight(.bold))
+                Text(entry.titleCased)
+                    .font(headwordFont)
+                    .fontWeight(.bold)
                     .selectableText()
 
                 Divider()
 
-                Text(entry.definition)
-                    .font(.system(.body, design: .serif))
-                    .lineSpacing(2)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .selectableText()
+                FormattedDefinitionView(definition: entry.definition)
             }
             .padding()
         }
     }
 }
 
-/// A full definition screen used as a navigation destination. Viewing a word
-/// records it in the recents list.
+/// A full definition screen used as a navigation destination. When opened from a
+/// search or random result it records the word in the matching recents section;
+/// re-opening from the Recent list passes `recordAs: nil` so it stays put.
 struct DefinitionView: View {
     let entry: DictionaryEntry
+    var recordAs: RecentSource? = nil
+
     @EnvironmentObject private var recents: RecentsStore
 
     var body: some View {
         DefinitionBody(entry: entry)
-            .navigationTitle(entry.title)
+            .navigationTitle(entry.titleCased)
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
-            .onAppear { recents.record(entry.word) }
+            .onAppear {
+                if let recordAs {
+                    recents.record(entry.word, source: recordAs)
+                }
+            }
     }
 }

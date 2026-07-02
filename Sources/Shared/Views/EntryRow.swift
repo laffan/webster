@@ -6,7 +6,7 @@ struct EntryRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(entry.title)
+            Text(entry.titleCased)
                 .font(.system(.headline, design: .serif))
             Text(entry.definition)
                 .font(.footnote)

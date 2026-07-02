@@ -14,9 +14,8 @@ struct SearchContent: View {
                 EntryRow(entry: entry)
             }
         }
-        .navigationTitle("Dictionary")
         .navigationDestination(for: DictionaryEntry.self) { entry in
-            DefinitionView(entry: entry)
+            DefinitionView(entry: entry, recordAs: .lookup)
         }
         .searchable(text: $query, prompt: searchPrompt)
         .searchFieldStyling()

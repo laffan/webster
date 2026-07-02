@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Recent screen contents: recently viewed headwords, newest first, with
+/// Recent screen contents: recently seen headwords split into "Lookup" (from
+/// Search) and "Random" (from the Random screen), newest first, with
 /// swipe-to-delete and a clear-all action.
 struct RecentsContent: View {
     @EnvironmentObject private var store: DictionaryStore
@@ -8,28 +9,42 @@ struct RecentsContent: View {
 
     var body: some View {
         List {
-            ForEach(recentEntries) { entry in
-                NavigationLink(value: entry) {
-                    EntryRow(entry: entry)
+            if !recents.lookups.isEmpty {
+                Section("Lookup") {
+                    ForEach(entries(for: recents.lookups)) { entry in
+                        NavigationLink(value: entry) {
+                            EntryRow(entry: entry)
+                        }
+                    }
+                    .onDelete { recents.remove(source: .lookup, atOffsets: $0) }
                 }
             }
-            .onDelete(perform: recents.remove(atOffsets:))
+
+            if !recents.randoms.isEmpty {
+                Section("Random") {
+                    ForEach(entries(for: recents.randoms)) { entry in
+                        NavigationLink(value: entry) {
+                            EntryRow(entry: entry)
+                        }
+                    }
+                    .onDelete { recents.remove(source: .random, atOffsets: $0) }
+                }
+            }
         }
-        .navigationTitle("Recent")
         .navigationDestination(for: DictionaryEntry.self) { entry in
             DefinitionView(entry: entry)
         }
         .overlay {
-            if recents.words.isEmpty {
+            if recents.items.isEmpty {
                 ContentUnavailableView(
                     "No Recent Words",
                     systemImage: "clock",
-                    description: Text("Words you look up will appear here.")
+                    description: Text("Words you look up or discover will appear here.")
                 )
             }
         }
         .toolbar {
-            if !recents.words.isEmpty {
+            if !recents.items.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Clear", role: .destructive) {
                         recents.clear()
@@ -39,9 +54,9 @@ struct RecentsContent: View {
         }
     }
 
-    /// Recents order mirrors `recents.words`, so delete offsets line up. Words
+    /// Section order mirrors the stored order, so delete offsets line up. Words
     /// always originate from the database, so `entry(for:)` resolves them.
-    private var recentEntries: [DictionaryEntry] {
-        recents.words.compactMap { store.entry(for: $0) }
+    private func entries(for items: [RecentItem]) -> [DictionaryEntry] {
+        items.compactMap { store.entry(for: $0.word) }
     }
 }

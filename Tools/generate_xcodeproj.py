@@ -23,11 +23,13 @@ WATCH_BUNDLE_ID = "com.laffan.WebsterDictionary.watchkitapp"
 SHARED_SWIFT = [
     "Sources/Shared/Models/DictionaryEntry.swift",
     "Sources/Shared/Data/DictionaryDatabase.swift",
+    "Sources/Shared/Data/DefinitionFormatter.swift",
     "Sources/Shared/Store/DictionaryStore.swift",
     "Sources/Shared/Store/RecentsStore.swift",
     "Sources/Shared/Views/ViewHelpers.swift",
     "Sources/Shared/Views/EntryRow.swift",
     "Sources/Shared/Views/DefinitionView.swift",
+    "Sources/Shared/Views/FormattedDefinitionView.swift",
     "Sources/Shared/Views/SearchContent.swift",
     "Sources/Shared/Views/RandomContent.swift",
     "Sources/Shared/Views/RecentsContent.swift",
@@ -173,7 +175,10 @@ def make_group(name, child_ids, path=None):
 
 
 models_g = make_group("Models", [file_refs["Sources/Shared/Models/DictionaryEntry.swift"]])
-data_g = make_group("Data", [file_refs["Sources/Shared/Data/DictionaryDatabase.swift"]])
+data_g = make_group("Data", [
+    file_refs["Sources/Shared/Data/DictionaryDatabase.swift"],
+    file_refs["Sources/Shared/Data/DefinitionFormatter.swift"],
+])
 store_g = make_group("Store", [
     file_refs["Sources/Shared/Store/DictionaryStore.swift"],
     file_refs["Sources/Shared/Store/RecentsStore.swift"],
@@ -182,6 +187,7 @@ views_g = make_group("Views", [
     file_refs["Sources/Shared/Views/ViewHelpers.swift"],
     file_refs["Sources/Shared/Views/EntryRow.swift"],
     file_refs["Sources/Shared/Views/DefinitionView.swift"],
+    file_refs["Sources/Shared/Views/FormattedDefinitionView.swift"],
     file_refs["Sources/Shared/Views/SearchContent.swift"],
     file_refs["Sources/Shared/Views/RandomContent.swift"],
     file_refs["Sources/Shared/Views/RecentsContent.swift"],

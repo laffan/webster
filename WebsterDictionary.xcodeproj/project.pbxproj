@@ -7,55 +7,59 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		000000000000000000000016 /* DictionaryEntry.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000001 /* DictionaryEntry.swift */; };
-		000000000000000000000017 /* DictionaryDatabase.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000002 /* DictionaryDatabase.swift */; };
-		000000000000000000000018 /* DictionaryStore.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000003 /* DictionaryStore.swift */; };
-		000000000000000000000019 /* RecentsStore.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000004 /* RecentsStore.swift */; };
-		00000000000000000000001A /* ViewHelpers.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000005 /* ViewHelpers.swift */; };
-		00000000000000000000001B /* EntryRow.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000006 /* EntryRow.swift */; };
-		00000000000000000000001C /* DefinitionView.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000007 /* DefinitionView.swift */; };
-		00000000000000000000001D /* SearchContent.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000008 /* SearchContent.swift */; };
-		00000000000000000000001E /* RandomContent.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000009 /* RandomContent.swift */; };
-		00000000000000000000001F /* RecentsContent.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000A /* RecentsContent.swift */; };
-		000000000000000000000020 /* WebsterDictionaryApp.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000B /* WebsterDictionaryApp.swift */; };
-		000000000000000000000021 /* RootTabView.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000C /* RootTabView.swift */; };
-		000000000000000000000022 /* DictionaryEntry.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000001 /* DictionaryEntry.swift */; };
-		000000000000000000000023 /* DictionaryDatabase.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000002 /* DictionaryDatabase.swift */; };
-		000000000000000000000024 /* DictionaryStore.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000003 /* DictionaryStore.swift */; };
-		000000000000000000000025 /* RecentsStore.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000004 /* RecentsStore.swift */; };
-		000000000000000000000026 /* ViewHelpers.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000005 /* ViewHelpers.swift */; };
-		000000000000000000000027 /* EntryRow.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000006 /* EntryRow.swift */; };
-		000000000000000000000028 /* DefinitionView.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000007 /* DefinitionView.swift */; };
-		000000000000000000000029 /* SearchContent.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000008 /* SearchContent.swift */; };
-		00000000000000000000002A /* RandomContent.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000009 /* RandomContent.swift */; };
-		00000000000000000000002B /* RecentsContent.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000A /* RecentsContent.swift */; };
-		00000000000000000000002C /* WatchApp.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000D /* WatchApp.swift */; };
-		00000000000000000000002D /* WatchRootView.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000E /* WatchRootView.swift */; };
-		00000000000000000000002E /* dictionary.sqlite */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000F /* dictionary.sqlite */; };
-		00000000000000000000002F /* Assets.xcassets */ = {isa = PBXBuildFile; fileRef = 000000000000000000000010 /* Assets.xcassets */; };
-		000000000000000000000030 /* dictionary.sqlite */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000F /* dictionary.sqlite */; };
-		000000000000000000000031 /* Assets.xcassets */ = {isa = PBXBuildFile; fileRef = 000000000000000000000011 /* Assets.xcassets */; };
-		000000000000000000000032 /* WebsterDictionary Watch App.app */ = {isa = PBXBuildFile; fileRef = 000000000000000000000015 /* WebsterDictionary Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		000000000000000000000018 /* DictionaryEntry.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000001 /* DictionaryEntry.swift */; };
+		000000000000000000000019 /* DictionaryDatabase.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000002 /* DictionaryDatabase.swift */; };
+		00000000000000000000001A /* DefinitionFormatter.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000003 /* DefinitionFormatter.swift */; };
+		00000000000000000000001B /* DictionaryStore.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000004 /* DictionaryStore.swift */; };
+		00000000000000000000001C /* RecentsStore.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000005 /* RecentsStore.swift */; };
+		00000000000000000000001D /* ViewHelpers.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000006 /* ViewHelpers.swift */; };
+		00000000000000000000001E /* EntryRow.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000007 /* EntryRow.swift */; };
+		00000000000000000000001F /* DefinitionView.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000008 /* DefinitionView.swift */; };
+		000000000000000000000020 /* FormattedDefinitionView.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000009 /* FormattedDefinitionView.swift */; };
+		000000000000000000000021 /* SearchContent.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000A /* SearchContent.swift */; };
+		000000000000000000000022 /* RandomContent.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000B /* RandomContent.swift */; };
+		000000000000000000000023 /* RecentsContent.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000C /* RecentsContent.swift */; };
+		000000000000000000000024 /* WebsterDictionaryApp.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000D /* WebsterDictionaryApp.swift */; };
+		000000000000000000000025 /* RootTabView.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000E /* RootTabView.swift */; };
+		000000000000000000000026 /* DictionaryEntry.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000001 /* DictionaryEntry.swift */; };
+		000000000000000000000027 /* DictionaryDatabase.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000002 /* DictionaryDatabase.swift */; };
+		000000000000000000000028 /* DefinitionFormatter.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000003 /* DefinitionFormatter.swift */; };
+		000000000000000000000029 /* DictionaryStore.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000004 /* DictionaryStore.swift */; };
+		00000000000000000000002A /* RecentsStore.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000005 /* RecentsStore.swift */; };
+		00000000000000000000002B /* ViewHelpers.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000006 /* ViewHelpers.swift */; };
+		00000000000000000000002C /* EntryRow.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000007 /* EntryRow.swift */; };
+		00000000000000000000002D /* DefinitionView.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000008 /* DefinitionView.swift */; };
+		00000000000000000000002E /* FormattedDefinitionView.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000009 /* FormattedDefinitionView.swift */; };
+		00000000000000000000002F /* SearchContent.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000A /* SearchContent.swift */; };
+		000000000000000000000030 /* RandomContent.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000B /* RandomContent.swift */; };
+		000000000000000000000031 /* RecentsContent.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000C /* RecentsContent.swift */; };
+		000000000000000000000032 /* WatchApp.swift */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000F /* WatchApp.swift */; };
+		000000000000000000000033 /* WatchRootView.swift */ = {isa = PBXBuildFile; fileRef = 000000000000000000000010 /* WatchRootView.swift */; };
+		000000000000000000000034 /* dictionary.sqlite */ = {isa = PBXBuildFile; fileRef = 000000000000000000000011 /* dictionary.sqlite */; };
+		000000000000000000000035 /* Assets.xcassets */ = {isa = PBXBuildFile; fileRef = 000000000000000000000012 /* Assets.xcassets */; };
+		000000000000000000000036 /* dictionary.sqlite */ = {isa = PBXBuildFile; fileRef = 000000000000000000000011 /* dictionary.sqlite */; };
+		000000000000000000000037 /* Assets.xcassets */ = {isa = PBXBuildFile; fileRef = 000000000000000000000013 /* Assets.xcassets */; };
+		000000000000000000000038 /* WebsterDictionary Watch App.app */ = {isa = PBXBuildFile; fileRef = 000000000000000000000017 /* WebsterDictionary Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		00000000000000000000003A /* PBXContainerItemProxy */ = {
+		000000000000000000000040 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 00000000000000000000003C /* Project object */;
+			containerPortal = 000000000000000000000042 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 00000000000000000000003E;
+			remoteGlobalIDString = 000000000000000000000044;
 			remoteInfo = "WebsterDictionary Watch App";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		000000000000000000000036 /* Embed Watch Content */ = {
+		00000000000000000000003C /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				000000000000000000000032 /* WebsterDictionary Watch App.app in Embed Watch Content */,
+				000000000000000000000038 /* WebsterDictionary Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -65,36 +69,38 @@
 /* Begin PBXFileReference section */
 		000000000000000000000001 /* DictionaryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Models/DictionaryEntry.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000002 /* DictionaryDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Data/DictionaryDatabase.swift; sourceTree = SOURCE_ROOT; };
-		000000000000000000000003 /* DictionaryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Store/DictionaryStore.swift; sourceTree = SOURCE_ROOT; };
-		000000000000000000000004 /* RecentsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Store/RecentsStore.swift; sourceTree = SOURCE_ROOT; };
-		000000000000000000000005 /* ViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/ViewHelpers.swift; sourceTree = SOURCE_ROOT; };
-		000000000000000000000006 /* EntryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/EntryRow.swift; sourceTree = SOURCE_ROOT; };
-		000000000000000000000007 /* DefinitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/DefinitionView.swift; sourceTree = SOURCE_ROOT; };
-		000000000000000000000008 /* SearchContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/SearchContent.swift; sourceTree = SOURCE_ROOT; };
-		000000000000000000000009 /* RandomContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/RandomContent.swift; sourceTree = SOURCE_ROOT; };
-		00000000000000000000000A /* RecentsContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/RecentsContent.swift; sourceTree = SOURCE_ROOT; };
-		00000000000000000000000B /* WebsterDictionaryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/iOS/WebsterDictionaryApp.swift; sourceTree = SOURCE_ROOT; };
-		00000000000000000000000C /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/iOS/RootTabView.swift; sourceTree = SOURCE_ROOT; };
-		00000000000000000000000D /* WatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Watch/WatchApp.swift; sourceTree = SOURCE_ROOT; };
-		00000000000000000000000E /* WatchRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Watch/WatchRootView.swift; sourceTree = SOURCE_ROOT; };
-		00000000000000000000000F /* dictionary.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sources/Shared/Resources/dictionary.sqlite; sourceTree = SOURCE_ROOT; };
-		000000000000000000000010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sources/iOS/Assets.xcassets; sourceTree = SOURCE_ROOT; };
-		000000000000000000000011 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sources/Watch/Assets.xcassets; sourceTree = SOURCE_ROOT; };
-		000000000000000000000012 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Sources/iOS/Info.plist; sourceTree = SOURCE_ROOT; };
-		000000000000000000000013 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Sources/Watch/Info.plist; sourceTree = SOURCE_ROOT; };
-		000000000000000000000014 /* WebsterDictionary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebsterDictionary.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		000000000000000000000015 /* WebsterDictionary Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WebsterDictionary Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000003 /* DefinitionFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Data/DefinitionFormatter.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000004 /* DictionaryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Store/DictionaryStore.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000005 /* RecentsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Store/RecentsStore.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000006 /* ViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/ViewHelpers.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000007 /* EntryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/EntryRow.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000008 /* DefinitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/DefinitionView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000009 /* FormattedDefinitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/FormattedDefinitionView.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000000A /* SearchContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/SearchContent.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000000B /* RandomContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/RandomContent.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000000C /* RecentsContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Shared/Views/RecentsContent.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000000D /* WebsterDictionaryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/iOS/WebsterDictionaryApp.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000000E /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/iOS/RootTabView.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000000F /* WatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Watch/WatchApp.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000010 /* WatchRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Watch/WatchRootView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000011 /* dictionary.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sources/Shared/Resources/dictionary.sqlite; sourceTree = SOURCE_ROOT; };
+		000000000000000000000012 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sources/iOS/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		000000000000000000000013 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sources/Watch/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		000000000000000000000014 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Sources/iOS/Info.plist; sourceTree = SOURCE_ROOT; };
+		000000000000000000000015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Sources/Watch/Info.plist; sourceTree = SOURCE_ROOT; };
+		000000000000000000000016 /* WebsterDictionary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebsterDictionary.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000017 /* WebsterDictionary Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WebsterDictionary Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		000000000000000000000035 /* Frameworks */ = {
+		00000000000000000000003B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		000000000000000000000039 /* Frameworks */ = {
+		00000000000000000000003F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -104,7 +110,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00000000000000000000003F /* Models */ = {
+		000000000000000000000045 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				000000000000000000000001 /* child */,
@@ -112,134 +118,136 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
-		000000000000000000000040 /* Data */ = {
+		000000000000000000000046 /* Data */ = {
 			isa = PBXGroup;
 			children = (
 				000000000000000000000002 /* child */,
+				000000000000000000000003 /* child */,
 			);
 			name = Data;
 			sourceTree = "<group>";
 		};
-		000000000000000000000041 /* Store */ = {
+		000000000000000000000047 /* Store */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000003 /* child */,
 				000000000000000000000004 /* child */,
+				000000000000000000000005 /* child */,
 			);
 			name = Store;
 			sourceTree = "<group>";
 		};
-		000000000000000000000042 /* Views */ = {
+		000000000000000000000048 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000005 /* child */,
 				000000000000000000000006 /* child */,
 				000000000000000000000007 /* child */,
 				000000000000000000000008 /* child */,
 				000000000000000000000009 /* child */,
 				00000000000000000000000A /* child */,
+				00000000000000000000000B /* child */,
+				00000000000000000000000C /* child */,
 			);
 			name = Views;
 			sourceTree = "<group>";
 		};
-		000000000000000000000043 /* Resources */ = {
+		000000000000000000000049 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				00000000000000000000000F /* child */,
+				000000000000000000000011 /* child */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		000000000000000000000044 /* Shared */ = {
+		00000000000000000000004A /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				00000000000000000000003F /* child */,
-				000000000000000000000040 /* child */,
-				000000000000000000000041 /* child */,
-				000000000000000000000042 /* child */,
-				000000000000000000000043 /* child */,
+				000000000000000000000045 /* child */,
+				000000000000000000000046 /* child */,
+				000000000000000000000047 /* child */,
+				000000000000000000000048 /* child */,
+				000000000000000000000049 /* child */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
 		};
-		000000000000000000000045 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				00000000000000000000000B /* child */,
-				00000000000000000000000C /* child */,
-				000000000000000000000010 /* child */,
-				000000000000000000000012 /* child */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
-		000000000000000000000046 /* Watch */ = {
+		00000000000000000000004B /* iOS */ = {
 			isa = PBXGroup;
 			children = (
 				00000000000000000000000D /* child */,
 				00000000000000000000000E /* child */,
-				000000000000000000000011 /* child */,
+				000000000000000000000012 /* child */,
+				000000000000000000000014 /* child */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		00000000000000000000004C /* Watch */ = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000000F /* child */,
+				000000000000000000000010 /* child */,
 				000000000000000000000013 /* child */,
+				000000000000000000000015 /* child */,
 			);
 			name = Watch;
 			sourceTree = "<group>";
 		};
-		000000000000000000000047 /* Sources */ = {
+		00000000000000000000004D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000044 /* child */,
-				000000000000000000000045 /* child */,
-				000000000000000000000046 /* child */,
+				00000000000000000000004A /* child */,
+				00000000000000000000004B /* child */,
+				00000000000000000000004C /* child */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
 		};
-		000000000000000000000048 /* Products */ = {
+		00000000000000000000004E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000014 /* child */,
-				000000000000000000000015 /* child */,
+				000000000000000000000016 /* child */,
+				000000000000000000000017 /* child */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		000000000000000000000049 /* Main */ = {
+		00000000000000000000004F /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000047 /* child */,
-				000000000000000000000048 /* child */,
+				00000000000000000000004D /* child */,
+				00000000000000000000004E /* child */,
 			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00000000000000000000003D /* WebsterDictionary */ = {
+		000000000000000000000043 /* WebsterDictionary */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00000000000000000000004F /* Build configuration list for PBXNativeTarget "WebsterDictionary" */;
+			buildConfigurationList = 000000000000000000000055 /* Build configuration list for PBXNativeTarget "WebsterDictionary" */;
 			buildPhases = (
-				000000000000000000000033 /* Sources */,
-				000000000000000000000035 /* Frameworks */,
-				000000000000000000000034 /* Resources */,
-				000000000000000000000036 /* Embed Watch Content */,
+				000000000000000000000039 /* Sources */,
+				00000000000000000000003B /* Frameworks */,
+				00000000000000000000003A /* Resources */,
+				00000000000000000000003C /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				00000000000000000000003B /* PBXTargetDependency */,
+				000000000000000000000041 /* PBXTargetDependency */,
 			);
 			name = WebsterDictionary;
 			productName = WebsterDictionary;
-			productReference = 000000000000000000000014 /* WebsterDictionary.app */;
+			productReference = 000000000000000000000016 /* WebsterDictionary.app */;
 			productType = "com.apple.product-type.application";
 		};
-		00000000000000000000003E /* WebsterDictionary Watch App */ = {
+		000000000000000000000044 /* WebsterDictionary Watch App */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 000000000000000000000052 /* Build configuration list for PBXNativeTarget "WebsterDictionary Watch App" */;
+			buildConfigurationList = 000000000000000000000058 /* Build configuration list for PBXNativeTarget "WebsterDictionary Watch App" */;
 			buildPhases = (
-				000000000000000000000037 /* Sources */,
-				000000000000000000000039 /* Frameworks */,
-				000000000000000000000038 /* Resources */,
+				00000000000000000000003D /* Sources */,
+				00000000000000000000003F /* Frameworks */,
+				00000000000000000000003E /* Resources */,
 			);
 			buildRules = (
 			);
@@ -247,24 +255,24 @@
 			);
 			name = "WebsterDictionary Watch App";
 			productName = "WebsterDictionary Watch App";
-			productReference = 000000000000000000000015 /* WebsterDictionary Watch App.app */;
+			productReference = 000000000000000000000017 /* WebsterDictionary Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		00000000000000000000003C /* Project object */ = {
+		000000000000000000000042 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
-					00000000000000000000003D = { CreatedOnToolsVersion = 15.4; };
-					00000000000000000000003E = { CreatedOnToolsVersion = 15.4; };
+					000000000000000000000043 = { CreatedOnToolsVersion = 15.4; };
+					000000000000000000000044 = { CreatedOnToolsVersion = 15.4; };
 				};
 			};
-			buildConfigurationList = 00000000000000000000004C /* Build configuration list for PBXProject */;
+			buildConfigurationList = 000000000000000000000052 /* Build configuration list for PBXProject */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -272,45 +280,43 @@
 				en,
 				Base,
 			);
-			mainGroup = 000000000000000000000049;
-			productRefGroup = 000000000000000000000048 /* Products */;
+			mainGroup = 00000000000000000000004F;
+			productRefGroup = 00000000000000000000004E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				00000000000000000000003D /* WebsterDictionary */,
-				00000000000000000000003E /* WebsterDictionary Watch App */,
+				000000000000000000000043 /* WebsterDictionary */,
+				000000000000000000000044 /* WebsterDictionary Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		000000000000000000000034 /* Resources */ = {
+		00000000000000000000003A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00000000000000000000002E /* in Resources */,
-				00000000000000000000002F /* in Resources */,
+				000000000000000000000034 /* in Resources */,
+				000000000000000000000035 /* in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		000000000000000000000038 /* Resources */ = {
+		00000000000000000000003E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				000000000000000000000030 /* in Resources */,
-				000000000000000000000031 /* in Resources */,
+				000000000000000000000036 /* in Resources */,
+				000000000000000000000037 /* in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		000000000000000000000033 /* Sources */ = {
+		000000000000000000000039 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				000000000000000000000016 /* in Sources */,
-				000000000000000000000017 /* in Sources */,
 				000000000000000000000018 /* in Sources */,
 				000000000000000000000019 /* in Sources */,
 				00000000000000000000001A /* in Sources */,
@@ -321,17 +327,17 @@
 				00000000000000000000001F /* in Sources */,
 				000000000000000000000020 /* in Sources */,
 				000000000000000000000021 /* in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		000000000000000000000037 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 				000000000000000000000022 /* in Sources */,
 				000000000000000000000023 /* in Sources */,
 				000000000000000000000024 /* in Sources */,
 				000000000000000000000025 /* in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000003D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 				000000000000000000000026 /* in Sources */,
 				000000000000000000000027 /* in Sources */,
 				000000000000000000000028 /* in Sources */,
@@ -340,21 +346,27 @@
 				00000000000000000000002B /* in Sources */,
 				00000000000000000000002C /* in Sources */,
 				00000000000000000000002D /* in Sources */,
+				00000000000000000000002E /* in Sources */,
+				00000000000000000000002F /* in Sources */,
+				000000000000000000000030 /* in Sources */,
+				000000000000000000000031 /* in Sources */,
+				000000000000000000000032 /* in Sources */,
+				000000000000000000000033 /* in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		00000000000000000000003B /* PBXTargetDependency */ = {
+		000000000000000000000041 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 00000000000000000000003E /* WebsterDictionary Watch App */;
-			targetProxy = 00000000000000000000003A /* PBXContainerItemProxy */;
+			target = 000000000000000000000044 /* WebsterDictionary Watch App */;
+			targetProxy = 000000000000000000000040 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		00000000000000000000004A /* Debug */ = {
+		000000000000000000000050 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -377,7 +389,7 @@
 			};
 			name = Debug;
 		};
-		00000000000000000000004B /* Release */ = {
+		000000000000000000000051 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -398,7 +410,7 @@
 			};
 			name = Release;
 		};
-		00000000000000000000004D /* Debug */ = {
+		000000000000000000000053 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -419,7 +431,7 @@
 			};
 			name = Debug;
 		};
-		00000000000000000000004E /* Release */ = {
+		000000000000000000000054 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -440,7 +452,7 @@
 			};
 			name = Release;
 		};
-		000000000000000000000050 /* Debug */ = {
+		000000000000000000000056 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -462,7 +474,7 @@
 			};
 			name = Debug;
 		};
-		000000000000000000000051 /* Release */ = {
+		000000000000000000000057 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -487,24 +499,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00000000000000000000004C /* Build configuration list */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				00000000000000000000004A /* config */,
-				00000000000000000000004B /* config */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		00000000000000000000004F /* Build configuration list */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				00000000000000000000004D /* config */,
-				00000000000000000000004E /* config */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		000000000000000000000052 /* Build configuration list */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -514,7 +508,25 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		000000000000000000000055 /* Build configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000053 /* config */,
+				000000000000000000000054 /* config */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		000000000000000000000058 /* Build configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000056 /* config */,
+				000000000000000000000057 /* config */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 00000000000000000000003C /* Project object */;
+	rootObject = 000000000000000000000042 /* Project object */;
 }
