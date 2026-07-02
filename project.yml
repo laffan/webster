@@ -1,0 +1,54 @@
+# XcodeGen spec — an alternative, guaranteed-consistent way to (re)generate
+# WebsterDictionary.xcodeproj. A prebuilt .xcodeproj is committed for direct
+# opening; if you ever need to regenerate it, run:
+#
+#     brew install xcodegen
+#     xcodegen generate
+#
+name: WebsterDictionary
+options:
+  bundleIdPrefix: com.laffan
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "17.0"
+    watchOS: "10.0"
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    CODE_SIGN_STYLE: Automatic
+    OTHER_LDFLAGS: "-lsqlite3"
+
+targets:
+  WebsterDictionary:
+    type: application
+    platform: iOS
+    sources:
+      - Sources/Shared
+      - Sources/iOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.laffan.WebsterDictionary
+        INFOPLIST_FILE: Sources/iOS/Info.plist
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - target: WebsterDictionary Watch App
+        embed: true
+
+  WebsterDictionary Watch App:
+    type: application
+    platform: watchOS
+    sources:
+      - Sources/Shared
+      - Sources/Watch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.laffan.WebsterDictionary.watchkitapp
+        INFOPLIST_FILE: Sources/Watch/Info.plist
+        TARGETED_DEVICE_FAMILY: "4"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor

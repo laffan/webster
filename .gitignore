@@ -1,0 +1,24 @@
+# Xcode / macOS
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+xcuserdata/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Xcode auto-generated per-user scheme management
+WebsterDictionary.xcodeproj/xcuserdata/
+WebsterDictionary.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Python (build tooling)
+__pycache__/
+*.pyc
