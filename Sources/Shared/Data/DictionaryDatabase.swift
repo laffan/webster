@@ -89,9 +89,42 @@ final class DictionaryDatabase {
         return results.first ?? entry(id: 1)
     }
 
-    private func entry(id: Int) -> DictionaryEntry? {
+    func entry(id: Int) -> DictionaryEntry? {
         let sql = "SELECT id, word, definition FROM entries WHERE id = ? LIMIT 1;"
         return run(sql) { stmt in sqlite3_bind_int64(stmt, 1, Int64(id)) }.first
+    }
+
+    /// Loads every headword (id + word, no definitions) sorted alphabetically,
+    /// for the Browse screen.
+    ///
+    /// Opens its own read-only connection so it is safe to call off the main
+    /// thread — SQLite connections must not be shared across threads, but
+    /// separate connections to the same file are fine for reading.
+    static func loadHeadwords(resource: String = "dictionary",
+                              withExtension ext: String = "sqlite") -> [Headword] {
+        guard let url = Bundle.main.url(forResource: resource, withExtension: ext) else {
+            return []
+        }
+        var handle: OpaquePointer?
+        guard sqlite3_open_v2(url.path, &handle, SQLITE_OPEN_READONLY, nil) == SQLITE_OK,
+              let handle else {
+            if let handle { sqlite3_close(handle) }
+            return []
+        }
+        defer { sqlite3_close(handle) }
+
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(handle, "SELECT id, word FROM entries ORDER BY word_lower;",
+                                 -1, &stmt, nil) == SQLITE_OK else { return [] }
+        defer { sqlite3_finalize(stmt) }
+
+        var result: [Headword] = []
+        while sqlite3_step(stmt) == SQLITE_ROW {
+            let id = Int(sqlite3_column_int64(stmt, 0))
+            guard let wordC = sqlite3_column_text(stmt, 1) else { continue }
+            result.append(Headword(id: id, word: String(cString: wordC)))
+        }
+        return result
     }
 
     // MARK: - Helpers

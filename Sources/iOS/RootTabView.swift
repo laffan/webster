@@ -13,6 +13,13 @@ struct RootTabView: View {
             }
 
             NavigationStack {
+                BrowseContent()
+            }
+            .tabItem {
+                Label("Browse", systemImage: "list.bullet")
+            }
+
+            NavigationStack {
                 RandomContent()
             }
             .tabItem {

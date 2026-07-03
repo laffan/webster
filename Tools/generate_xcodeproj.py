@@ -22,6 +22,7 @@ WATCH_BUNDLE_ID = "com.laffan.WebsterDictionary.watchkitapp"
 # Source files compiled into BOTH the iOS and watch targets.
 SHARED_SWIFT = [
     "Sources/Shared/Models/DictionaryEntry.swift",
+    "Sources/Shared/Models/Headword.swift",
     "Sources/Shared/Data/DictionaryDatabase.swift",
     "Sources/Shared/Data/DefinitionFormatter.swift",
     "Sources/Shared/Store/DictionaryStore.swift",
@@ -31,6 +32,7 @@ SHARED_SWIFT = [
     "Sources/Shared/Views/DefinitionView.swift",
     "Sources/Shared/Views/FormattedDefinitionView.swift",
     "Sources/Shared/Views/SearchContent.swift",
+    "Sources/Shared/Views/BrowseContent.swift",
     "Sources/Shared/Views/RandomContent.swift",
     "Sources/Shared/Views/RecentsContent.swift",
 ]
@@ -174,7 +176,10 @@ def make_group(name, child_ids, path=None):
     return gid
 
 
-models_g = make_group("Models", [file_refs["Sources/Shared/Models/DictionaryEntry.swift"]])
+models_g = make_group("Models", [
+    file_refs["Sources/Shared/Models/DictionaryEntry.swift"],
+    file_refs["Sources/Shared/Models/Headword.swift"],
+])
 data_g = make_group("Data", [
     file_refs["Sources/Shared/Data/DictionaryDatabase.swift"],
     file_refs["Sources/Shared/Data/DefinitionFormatter.swift"],
@@ -189,6 +194,7 @@ views_g = make_group("Views", [
     file_refs["Sources/Shared/Views/DefinitionView.swift"],
     file_refs["Sources/Shared/Views/FormattedDefinitionView.swift"],
     file_refs["Sources/Shared/Views/SearchContent.swift"],
+    file_refs["Sources/Shared/Views/BrowseContent.swift"],
     file_refs["Sources/Shared/Views/RandomContent.swift"],
     file_refs["Sources/Shared/Views/RecentsContent.swift"],
 ])

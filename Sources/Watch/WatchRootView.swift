@@ -14,6 +14,12 @@ struct WatchRootView: View {
                 }
 
                 NavigationLink {
+                    BrowseContent()
+                } label: {
+                    Label("Browse", systemImage: "list.bullet")
+                }
+
+                NavigationLink {
                     RandomContent()
                 } label: {
                     Label("Random", systemImage: "shuffle")
