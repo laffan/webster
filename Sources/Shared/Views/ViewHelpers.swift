@@ -22,4 +22,30 @@ extension View {
         self.autocorrectionDisabled()
         #endif
     }
+
+    /// Attaches a touch-and-hold menu that flags or unflags `word` as a
+    /// favorite — the subtle, system-standard way to reveal the action without
+    /// cluttering the row.
+    func favoriteContextMenu(for word: String) -> some View {
+        modifier(FavoriteContextMenu(word: word))
+    }
+}
+
+private struct FavoriteContextMenu: ViewModifier {
+    let word: String
+    @EnvironmentObject private var favorites: FavoritesStore
+
+    func body(content: Content) -> some View {
+        content.contextMenu {
+            Button {
+                favorites.toggle(word)
+            } label: {
+                if favorites.isFavorite(word) {
+                    Label("Remove from Favorites", systemImage: "star.slash")
+                } else {
+                    Label("Add to Favorites", systemImage: "star")
+                }
+            }
+        }
+    }
 }

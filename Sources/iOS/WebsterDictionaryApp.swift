@@ -4,13 +4,15 @@ import SwiftUI
 @main
 struct WebsterDictionaryApp: App {
     @StateObject private var store = DictionaryStore()
-    @StateObject private var recents = RecentsStore()
+    @StateObject private var history = HistoryStore()
+    @StateObject private var favorites = FavoritesStore()
 
     var body: some Scene {
         WindowGroup {
             RootTabView()
                 .environmentObject(store)
-                .environmentObject(recents)
+                .environmentObject(history)
+                .environmentObject(favorites)
         }
     }
 }

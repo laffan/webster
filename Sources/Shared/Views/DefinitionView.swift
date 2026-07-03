@@ -24,6 +24,7 @@ struct DefinitionContent: View {
             FormattedDefinitionView(definition: entry.definition)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .favoriteContextMenu(for: entry.word)
     }
 }
 
@@ -40,13 +41,14 @@ struct DefinitionBody: View {
 }
 
 /// A full definition screen used as a navigation destination. When opened from a
-/// search or browse result it records the word in the matching recents section;
-/// re-opening from the Recent list passes `recordAs: nil` so it stays put.
+/// search or browse result it records the word in the matching history section;
+/// re-opening from the History list passes `recordAs: nil` so it stays put.
 struct DefinitionView: View {
     let entry: DictionaryEntry
-    var recordAs: RecentSource? = nil
+    var recordAs: HistorySource? = nil
 
-    @EnvironmentObject private var recents: RecentsStore
+    @EnvironmentObject private var history: HistoryStore
+    @EnvironmentObject private var favorites: FavoritesStore
 
     var body: some View {
         DefinitionBody(entry: entry)
@@ -54,9 +56,21 @@ struct DefinitionView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    let isFavorite = favorites.isFavorite(entry.word)
+                    Button {
+                        favorites.toggle(entry.word)
+                    } label: {
+                        Label(isFavorite ? "Remove from Favorites" : "Add to Favorites",
+                              systemImage: isFavorite ? "star.fill" : "star")
+                    }
+                    .accessibilityLabel(isFavorite ? "Remove from Favorites" : "Add to Favorites")
+                }
+            }
             .onAppear {
                 if let recordAs {
-                    recents.record(entry.word, source: recordAs)
+                    history.record(entry.word, source: recordAs)
                 }
             }
     }

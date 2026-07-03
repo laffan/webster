@@ -161,6 +161,7 @@ private struct BrowseEntryView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .favoriteContextMenu(for: entry.word)
         .task {
             if parsed == nil {
                 parsed = ParsedDefinition.parse(entry.definition)

@@ -1,32 +1,34 @@
 import SwiftUI
 
-/// Recent screen contents: recently seen headwords split into "Lookup" (from
-/// Search), "Browse", and "Random" sections, newest first, with swipe-to-delete
-/// and a clear-all action.
-struct RecentsContent: View {
+/// History screen contents: seen headwords split into "Lookup" (from Search) and
+/// "Random" sections, newest first, with swipe-to-delete and a clear-all action.
+/// (A legacy "Browse" section still appears for anyone who used the old
+/// accordion browse, but nothing records into it anymore.)
+struct HistoryContent: View {
     @EnvironmentObject private var store: DictionaryStore
-    @EnvironmentObject private var recents: RecentsStore
+    @EnvironmentObject private var history: HistoryStore
 
     var body: some View {
         List {
-            recentSection("Lookup", items: recents.lookups, source: .lookup)
-            recentSection("Browse", items: recents.browses, source: .browse)
-            recentSection("Random", items: recents.randoms, source: .random)
+            historySection("Lookup", items: history.lookups, source: .lookup)
+            historySection("Browse", items: history.browses, source: .browse)
+            historySection("Random", items: history.randoms, source: .random)
         }
+        .navigationTitle("History")
         .overlay {
-            if recents.items.isEmpty {
+            if history.items.isEmpty {
                 ContentUnavailableView(
-                    "No Recent Words",
+                    "No History",
                     systemImage: "clock",
                     description: Text("Words you look up or discover will appear here.")
                 )
             }
         }
         .toolbar {
-            if !recents.items.isEmpty {
+            if !history.items.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Clear", role: .destructive) {
-                        recents.clear()
+                        history.clear()
                     }
                 }
             }
@@ -34,7 +36,7 @@ struct RecentsContent: View {
     }
 
     @ViewBuilder
-    private func recentSection(_ title: String, items: [RecentItem], source: RecentSource) -> some View {
+    private func historySection(_ title: String, items: [HistoryItem], source: HistorySource) -> some View {
         if !items.isEmpty {
             Section(title) {
                 ForEach(entries(for: items)) { entry in
@@ -44,14 +46,14 @@ struct RecentsContent: View {
                         EntryRow(entry: entry)
                     }
                 }
-                .onDelete { recents.remove(source: source, atOffsets: $0) }
+                .onDelete { history.remove(source: source, atOffsets: $0) }
             }
         }
     }
 
     /// Section order mirrors the stored order, so delete offsets line up. Words
     /// always originate from the database, so `entry(for:)` resolves them.
-    private func entries(for items: [RecentItem]) -> [DictionaryEntry] {
+    private func entries(for items: [HistoryItem]) -> [DictionaryEntry] {
         items.compactMap { store.entry(for: $0.word) }
     }
 }

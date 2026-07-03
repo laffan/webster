@@ -26,7 +26,8 @@ SHARED_SWIFT = [
     "Sources/Shared/Data/DictionaryDatabase.swift",
     "Sources/Shared/Data/DefinitionFormatter.swift",
     "Sources/Shared/Store/DictionaryStore.swift",
-    "Sources/Shared/Store/RecentsStore.swift",
+    "Sources/Shared/Store/HistoryStore.swift",
+    "Sources/Shared/Store/FavoritesStore.swift",
     "Sources/Shared/Views/ViewHelpers.swift",
     "Sources/Shared/Views/EntryRow.swift",
     "Sources/Shared/Views/DefinitionView.swift",
@@ -34,7 +35,8 @@ SHARED_SWIFT = [
     "Sources/Shared/Views/SearchContent.swift",
     "Sources/Shared/Views/BrowseContent.swift",
     "Sources/Shared/Views/RandomContent.swift",
-    "Sources/Shared/Views/RecentsContent.swift",
+    "Sources/Shared/Views/HistoryContent.swift",
+    "Sources/Shared/Views/FavoritesContent.swift",
 ]
 SHARED_RESOURCE = "Sources/Shared/Resources/dictionary.sqlite"
 
@@ -186,7 +188,8 @@ data_g = make_group("Data", [
 ])
 store_g = make_group("Store", [
     file_refs["Sources/Shared/Store/DictionaryStore.swift"],
-    file_refs["Sources/Shared/Store/RecentsStore.swift"],
+    file_refs["Sources/Shared/Store/HistoryStore.swift"],
+    file_refs["Sources/Shared/Store/FavoritesStore.swift"],
 ])
 views_g = make_group("Views", [
     file_refs["Sources/Shared/Views/ViewHelpers.swift"],
@@ -196,7 +199,8 @@ views_g = make_group("Views", [
     file_refs["Sources/Shared/Views/SearchContent.swift"],
     file_refs["Sources/Shared/Views/BrowseContent.swift"],
     file_refs["Sources/Shared/Views/RandomContent.swift"],
-    file_refs["Sources/Shared/Views/RecentsContent.swift"],
+    file_refs["Sources/Shared/Views/HistoryContent.swift"],
+    file_refs["Sources/Shared/Views/FavoritesContent.swift"],
 ])
 resources_g = make_group("Resources", [file_refs[SHARED_RESOURCE]])
 shared_g = make_group("Shared", [models_g, data_g, store_g, views_g, resources_g])

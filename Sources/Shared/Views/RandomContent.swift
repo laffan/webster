@@ -1,10 +1,10 @@
 import SwiftUI
 
 /// Random screen contents: shows two random definitions with a shuffle control.
-/// Each word shown is recorded in the Random section of recents.
+/// Each word shown is recorded in the Random section of history.
 struct RandomContent: View {
     @EnvironmentObject private var store: DictionaryStore
-    @EnvironmentObject private var recents: RecentsStore
+    @EnvironmentObject private var history: HistoryStore
     @State private var entries: [DictionaryEntry] = []
 
     private let wordCount = 2
@@ -56,7 +56,7 @@ struct RandomContent: View {
         }
         entries = picked
         for entry in picked {
-            recents.record(entry.word, source: .random)
+            history.record(entry.word, source: .random)
         }
     }
 }

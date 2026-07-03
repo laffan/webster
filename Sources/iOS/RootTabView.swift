@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Three-tab layout for iPhone and iPad: Search, Random, Recent. Each tab owns
-/// its own `NavigationStack` so navigation state is independent per tab.
+/// Tab layout for iPhone and iPad: Search, Browse, Random, Favorites, History.
+/// Each tab owns its own `NavigationStack` so navigation state is independent
+/// per tab.
 struct RootTabView: View {
     var body: some View {
         TabView {
@@ -27,10 +28,17 @@ struct RootTabView: View {
             }
 
             NavigationStack {
-                RecentsContent()
+                FavoritesContent()
             }
             .tabItem {
-                Label("Recent", systemImage: "clock")
+                Label("Favorites", systemImage: "star")
+            }
+
+            NavigationStack {
+                HistoryContent()
+            }
+            .tabItem {
+                Label("History", systemImage: "clock")
             }
         }
     }
