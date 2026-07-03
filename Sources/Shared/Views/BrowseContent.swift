@@ -1,4 +1,15 @@
 import SwiftUI
+#if os(iOS)
+import UIKit
+
+/// True on iPad, where Browse gains a fixed large-letter column and caps the
+/// reading width so landscape lines don't stretch across the whole screen.
+private let isPad = UIDevice.current.userInterfaceIdiom == .pad
+
+/// Highlight for the current letter and section — a bright red, like the thumb
+/// index printed down the edge of a real dictionary.
+private let browseCurrentColor = Color.red
+#endif
 
 /// Browse screen.
 ///
@@ -50,15 +61,25 @@ struct BrowseContent: View {
     }
 
     private var iOSLayout: some View {
-        HStack(spacing: 0) {
-            if let section = currentSection {
-                BrowseLetterView(section: section)
-                    .frame(maxWidth: .infinity)
+        GeometryReader { geo in
+            HStack(spacing: 0) {
+                if let section = currentSection {
+                    // iPad: a fixed oversized letter fills the left gutter and the
+                    // reading column is capped (proportionally, so the letter keeps
+                    // room in both orientations) rather than sprawling in landscape.
+                    if isPad {
+                        LetterSidebar(letter: section.letter)
+                    }
+                    BrowseLetterView(section: section)
+                        .frame(maxWidth: isPad ? min(680, geo.size.width * 0.62) : .infinity)
+                        .layoutPriority(1)
+                }
+                LetterRail(
+                    letters: sections.map(\.letter),
+                    selected: currentSection?.letter
+                ) { selectedLetter = $0 }
             }
-            LetterRail(
-                letters: sections.map(\.letter),
-                selected: currentSection?.letter
-            ) { selectedLetter = $0 }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -191,16 +212,21 @@ private struct BrowseLetterView: View {
         }
     }
 
+    @ViewBuilder
     private var pageHeader: some View {
+        // On iPad the big letter lives in the fixed left column, so the page
+        // just needs its rule; on iPhone we show the drop-letter here.
         VStack(alignment: .leading, spacing: 6) {
-            Text(section.letter)
-                .font(.system(size: 52, weight: .bold, design: .serif))
-                .foregroundStyle(.primary)
+            if !isPad {
+                Text(section.letter)
+                    .font(.system(size: 52, weight: .bold, design: .serif))
+                    .foregroundStyle(.primary)
+            }
             Rectangle()
                 .fill(.primary)
                 .frame(height: 1)
         }
-        .padding(.top, 12)
+        .padding(.top, isPad ? 8 : 12)
         .padding(.bottom, 18)
     }
 
@@ -259,6 +285,25 @@ private struct BrowseEntryView: View {
     }
 }
 
+// MARK: - iPad large-letter column
+
+/// The fixed oversized letter shown in the left gutter on iPad. It stays put
+/// while the definitions scroll, like the letter printed at the top of a
+/// dictionary page.
+private struct LetterSidebar: View {
+    let letter: String
+
+    var body: some View {
+        Text(letter)
+            .font(.system(size: 220, weight: .bold, design: .serif))
+            .minimumScaleFactor(0.2)
+            .lineLimit(1)
+            .foregroundStyle(.primary)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(24)
+    }
+}
+
 // MARK: - Section rail (sub-sections + scroll position)
 
 /// A proportional minimap of the current letter's two-letter sub-sections. Each
@@ -287,18 +332,18 @@ private struct SectionRail: View {
                 ForEach(Array(subsections.enumerated()), id: \.element.id) { index, sub in
                     if visible[index] || index == currentIndex {
                         Text(sub.label)
-                            .font(.system(size: 10,
+                            .font(.system(size: 12,
                                           weight: index == currentIndex ? .bold : .regular,
                                           design: .serif))
-                            .foregroundStyle(index == currentIndex ? Color.accentColor : Color.secondary)
+                            .foregroundStyle(index == currentIndex ? browseCurrentColor : Color.secondary)
                             .position(x: geo.size.width / 2, y: y(for: subsections[index].firstIndex, height: height))
                     }
                 }
 
                 // Live scroll-position marker.
                 Capsule()
-                    .fill(Color.accentColor)
-                    .frame(width: 16, height: 2)
+                    .fill(browseCurrentColor)
+                    .frame(width: 18, height: 2)
                     .position(x: geo.size.width / 2, y: y(for: topIndex, height: height))
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -316,7 +361,7 @@ private struct SectionRail: View {
                     .onEnded { _ in lastJumped = nil }
             )
         }
-        .frame(width: 32)
+        .frame(width: 42)
         .padding(.vertical, 10)
     }
 
@@ -368,7 +413,7 @@ private struct LetterRail: View {
                         .font(.system(size: 12,
                                       weight: selected == letter ? .bold : .semibold,
                                       design: .serif))
-                        .foregroundStyle(selected == letter ? Color.accentColor : Color.secondary)
+                        .foregroundStyle(selected == letter ? browseCurrentColor : Color.secondary)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .contentShape(Rectangle())
                 }
