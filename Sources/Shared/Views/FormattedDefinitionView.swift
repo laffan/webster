@@ -4,9 +4,19 @@ import SwiftUI
 /// sense numbers, indented lettered sub-senses, and a divider between homograph
 /// blocks (different parts of speech).
 struct FormattedDefinitionView: View {
-    let definition: String
+    private let parsed: ParsedDefinition
 
-    private var parsed: ParsedDefinition { ParsedDefinition.parse(definition) }
+    /// Parses the raw definition at init time. Fine for screens that show a
+    /// single entry; the Browse screen parses once off the render path and uses
+    /// `init(parsed:)` instead so scrolling never re-parses.
+    init(definition: String) {
+        self.parsed = ParsedDefinition.parse(definition)
+    }
+
+    /// Renders an already-parsed definition without re-parsing.
+    init(parsed: ParsedDefinition) {
+        self.parsed = parsed
+    }
 
     #if os(watchOS)
     private let bodyFont: Font = .system(.footnote, design: .serif)

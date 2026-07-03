@@ -55,6 +55,40 @@ final class DictionaryStore: ObservableObject {
         return sections
     }
 
+    // A tiny LRU of fully-loaded letters so hopping between recently-viewed
+    // letters is instant. Each letter's worth of definition text is a few MB;
+    // keeping a handful is comfortable on iOS and avoids re-querying on revisit.
+    private var browseEntries: [String: [DictionaryEntry]] = [:]
+    private var browseEntryOrder: [String] = []
+    private let browseEntryCacheLimit = 4
+
+    /// The full entries (with definitions) for one Browse letter, in the same
+    /// alphabetical order as the section's headwords. The bulk DB fetch runs off
+    /// the main thread; results are cached so revisiting a letter is instant.
+    func loadBrowseEntries(for section: BrowseSection) async -> [DictionaryEntry] {
+        if let cached = browseEntries[section.letter] {
+            touchBrowseCache(section.letter)
+            return cached
+        }
+        let ids = section.headwords.map(\.id)
+        let byID = await Task.detached(priority: .userInitiated) {
+            DictionaryDatabase.loadEntries(ids: ids)
+        }.value
+        let ordered = section.headwords.compactMap { byID[$0.id] }
+
+        browseEntries[section.letter] = ordered
+        touchBrowseCache(section.letter)
+        while browseEntryOrder.count > browseEntryCacheLimit {
+            browseEntries.removeValue(forKey: browseEntryOrder.removeFirst())
+        }
+        return ordered
+    }
+
+    private func touchBrowseCache(_ letter: String) {
+        browseEntryOrder.removeAll { $0 == letter }
+        browseEntryOrder.append(letter)
+    }
+
     nonisolated static func buildSections(from headwords: [Headword]) -> [BrowseSection] {
         var groups: [String: [Headword]] = [:]
         for headword in headwords {

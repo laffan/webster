@@ -127,6 +127,55 @@ final class DictionaryDatabase {
         return result
     }
 
+    /// Loads full entries (with definitions) for a set of headword ids, keyed by
+    /// id so callers can restore any order they like. Used by the Browse screen
+    /// to bulk-load a single letter in one pass instead of a query per row.
+    ///
+    /// Opens its own read-only connection so it is safe to call off the main
+    /// thread. The ids are chunked to stay under SQLite's bound-variable limit.
+    static func loadEntries(ids: [Int],
+                            resource: String = "dictionary",
+                            withExtension ext: String = "sqlite") -> [Int: DictionaryEntry] {
+        guard !ids.isEmpty,
+              let url = Bundle.main.url(forResource: resource, withExtension: ext) else {
+            return [:]
+        }
+        var handle: OpaquePointer?
+        guard sqlite3_open_v2(url.path, &handle, SQLITE_OPEN_READONLY, nil) == SQLITE_OK,
+              let handle else {
+            if let handle { sqlite3_close(handle) }
+            return [:]
+        }
+        defer { sqlite3_close(handle) }
+
+        var result: [Int: DictionaryEntry] = [:]
+        result.reserveCapacity(ids.count)
+
+        // 900 keeps us comfortably under the default SQLITE_MAX_VARIABLE_NUMBER.
+        for chunk in stride(from: 0, to: ids.count, by: 900).map({ start in
+            Array(ids[start..<min(start + 900, ids.count)])
+        }) {
+            let placeholders = Array(repeating: "?", count: chunk.count).joined(separator: ",")
+            let sql = "SELECT id, word, definition FROM entries WHERE id IN (\(placeholders));"
+
+            var stmt: OpaquePointer?
+            guard sqlite3_prepare_v2(handle, sql, -1, &stmt, nil) == SQLITE_OK else { continue }
+            for (index, id) in chunk.enumerated() {
+                sqlite3_bind_int64(stmt, Int32(index + 1), Int64(id))
+            }
+            while sqlite3_step(stmt) == SQLITE_ROW {
+                let id = Int(sqlite3_column_int64(stmt, 0))
+                guard let wordC = sqlite3_column_text(stmt, 1),
+                      let defC = sqlite3_column_text(stmt, 2) else { continue }
+                result[id] = DictionaryEntry(id: id,
+                                             word: String(cString: wordC),
+                                             definition: String(cString: defC))
+            }
+            sqlite3_finalize(stmt)
+        }
+        return result
+    }
+
     // MARK: - Helpers
 
     private func run(_ sql: String, bind: (OpaquePointer?) -> Void) -> [DictionaryEntry] {

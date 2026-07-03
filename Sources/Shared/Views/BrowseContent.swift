@@ -1,155 +1,212 @@
 import SwiftUI
 
-/// Browse screen: every headword in one long list, divided into large
-/// alphabetical section headers. On iPhone/iPad a word twirls its definition
-/// down inline (one at a time); on watchOS it pushes a definition pane. iOS also
-/// gets an A–Z index down the trailing edge that jumps/scrubs to a section and
-/// highlights the current scroll position.
+/// Browse screen.
+///
+/// On iPhone/iPad it reads like a page of a printed dictionary: one letter is
+/// shown at a time, with every entry's full definition laid out inline, and the
+/// A–Z rail down the trailing edge is a column of buttons that flip between
+/// letters. Only the selected letter's entries are ever loaded (in one bulk,
+/// off-main query, cached), and rows render lazily and parse once, so even the
+/// biggest letters scroll smoothly.
+///
+/// On watchOS it keeps the original long sectioned list, each word pushing a
+/// definition pane.
 struct BrowseContent: View {
     @EnvironmentObject private var store: DictionaryStore
     @State private var sections: [BrowseSection] = []
-    @State private var expandedID: Int?
-
-    private let coordinateSpace = "browseScroll"
+    #if os(iOS)
+    @State private var selectedLetter: String?
+    #endif
 
     var body: some View {
-        ScrollViewReader { proxy in
-            Group {
-                if sections.isEmpty {
-                    ProgressView()
-                } else {
-                    list
-                    #if os(iOS)
-                        .coordinateSpace(name: coordinateSpace)
-                        .contentMargins(.trailing, 34, for: .scrollContent)
-                        .overlayPreferenceValue(SectionOffsetsKey.self) { offsets in
-                            SectionIndexBar(
-                                letters: sections.map(\.letter),
-                                current: Self.currentLetter(from: offsets)
-                            ) { letter in
-                                proxy.scrollTo(letter, anchor: .top)
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
-                        }
-                    #endif
-                }
+        Group {
+            if sections.isEmpty {
+                ProgressView()
+            } else {
+                #if os(iOS)
+                iOSLayout
+                #else
+                watchList
+                #endif
             }
-            .task {
-                if sections.isEmpty {
-                    sections = await store.loadBrowseSections()
+        }
+        .task {
+            if sections.isEmpty {
+                sections = await store.loadBrowseSections()
+                #if os(iOS)
+                if selectedLetter == nil {
+                    selectedLetter = sections.first?.letter
                 }
+                #endif
             }
         }
     }
 
-    private var list: some View {
+    #if os(iOS)
+    private var currentSection: BrowseSection? {
+        sections.first { $0.letter == selectedLetter } ?? sections.first
+    }
+
+    private var iOSLayout: some View {
+        HStack(spacing: 0) {
+            if let section = currentSection {
+                BrowseLetterView(section: section)
+                    .frame(maxWidth: .infinity)
+            }
+            LetterRail(
+                letters: sections.map(\.letter),
+                selected: currentSection?.letter
+            ) { selectedLetter = $0 }
+        }
+        .navigationTitle("Browse")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+    #else
+    private var watchList: some View {
         List {
             ForEach(sections) { section in
                 Section {
                     ForEach(section.headwords) { headword in
-                        row(for: headword)
+                        WatchBrowseRow(headword: headword)
                     }
                 } header: {
-                    sectionHeader(section.letter)
+                    Text(section.letter)
+                        .font(.system(.title3, design: .serif).weight(.bold))
+                        .foregroundStyle(.primary)
+                        .textCase(nil)
                 }
-                .id(section.letter)
             }
         }
     }
-
-    @ViewBuilder
-    private func row(for headword: Headword) -> some View {
-        #if os(iOS)
-        InlineBrowseRow(
-            headword: headword,
-            isExpanded: expandedID == headword.id
-        ) {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                expandedID = (expandedID == headword.id) ? nil : headword.id
-            }
-        }
-        #else
-        WatchBrowseRow(headword: headword)
-        #endif
-    }
-
-    private func sectionHeader(_ letter: String) -> some View {
-        Text(letter)
-            .font(.system(.title2, design: .serif).weight(.bold))
-            .foregroundStyle(.primary)
-            .textCase(nil)
-            .background(
-                GeometryReader { geo in
-                    Color.clear.preference(
-                        key: SectionOffsetsKey.self,
-                        value: [letter: geo.frame(in: .named(coordinateSpace)).minY]
-                    )
-                }
-            )
-    }
-
-    /// The section header sitting at (or just above) the top of the list.
-    private static func currentLetter(from offsets: [String: CGFloat]) -> String? {
-        let atTop = offsets.filter { $0.value <= 44 }
-        return atTop.max(by: { $0.value < $1.value })?.key
-            ?? offsets.min(by: { $0.value < $1.value })?.key
-    }
+    #endif
 }
-
-// MARK: - Rows
 
 #if os(iOS)
-/// The iPhone/iPad browse row: a custom disclosure that reveals the definition
-/// inline. Expansion is driven by the parent so only one row opens at a time.
-private struct InlineBrowseRow: View {
-    let headword: Headword
-    let isExpanded: Bool
-    let onToggle: () -> Void
+// MARK: - One letter, dictionary-style
+
+/// A single letter rendered as a dictionary page: a large drop-letter heading
+/// followed by every entry's headword and full definition. Entries are
+/// bulk-loaded once per letter and rendered lazily.
+private struct BrowseLetterView: View {
+    let section: BrowseSection
 
     @EnvironmentObject private var store: DictionaryStore
-    @EnvironmentObject private var recents: RecentsStore
-    @State private var entry: DictionaryEntry?
+    @State private var entries: [DictionaryEntry] = []
+    @State private var loadedLetter: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Button(action: onToggle) {
-                HStack {
-                    Text(headword.titleCased)
-                        .font(.system(.body, design: .serif))
-                    Spacer(minLength: 8)
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                }
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                pageHeader
 
-            if isExpanded {
-                Group {
-                    if let entry {
-                        FormattedDefinitionView(definition: entry.definition)
-                    } else {
-                        ProgressView().frame(maxWidth: .infinity)
+                if loadedLetter == section.letter {
+                    ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                        if index > 0 {
+                            Divider().padding(.vertical, 14)
+                        }
+                        BrowseEntryView(entry: entry)
                     }
+                } else {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 48)
                 }
-                .padding(.top, 10)
-                .padding(.bottom, 12)
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 28)
+            // A fresh identity per letter resets the scroll position to the top.
+            .id(section.letter)
+        }
+        .task(id: section.letter) {
+            let letter = section.letter
+            let loaded = await store.loadBrowseEntries(for: section)
+            // Ignore a result that arrived after the user moved to another letter.
+            guard section.letter == letter else { return }
+            entries = loaded
+            loadedLetter = letter
+        }
+    }
+
+    private var pageHeader: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(section.letter)
+                .font(.system(size: 52, weight: .bold, design: .serif))
+                .foregroundStyle(.primary)
+            Rectangle()
+                .fill(.primary)
+                .frame(height: 1)
+        }
+        .padding(.top, 12)
+        .padding(.bottom, 18)
+    }
+}
+
+/// A single dictionary entry: bold serif headword above its full, formatted
+/// definition. The definition is parsed once, off the render path, and cached
+/// so scrolling back and forth never re-parses it.
+private struct BrowseEntryView: View {
+    let entry: DictionaryEntry
+    @State private var parsed: ParsedDefinition?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(entry.titleCased)
+                .font(.system(.title3, design: .serif).weight(.bold))
+                .foregroundStyle(.primary)
+                .fixedSize(horizontal: false, vertical: true)
+                .selectableText()
+
+            if let parsed {
+                FormattedDefinitionView(parsed: parsed)
             }
         }
-        .onChange(of: isExpanded) { _, expanded in
-            guard expanded else { return }
-            if entry == nil {
-                entry = store.entry(id: headword.id)
-            }
-            if let entry {
-                recents.record(entry.word, source: .browse)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .task {
+            if parsed == nil {
+                parsed = ParsedDefinition.parse(entry.definition)
             }
         }
     }
 }
-#else
+
+// MARK: - Letter rail
+
+/// The trailing A–Z rail, rebuilt as buttons: each letter flips the page to that
+/// letter, and the current letter is highlighted.
+private struct LetterRail: View {
+    let letters: [String]
+    let selected: String?
+    let onSelect: (String) -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(letters, id: \.self) { letter in
+                Button {
+                    onSelect(letter)
+                } label: {
+                    Text(letter)
+                        .font(.system(size: 12,
+                                      weight: selected == letter ? .bold : .semibold,
+                                      design: .serif))
+                        .foregroundStyle(selected == letter ? Color.accentColor : Color.secondary)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .frame(width: 26)
+        .padding(.vertical, 10)
+        .background(.ultraThinMaterial, in: Capsule())
+        .padding(.trailing, 4)
+        .padding(.vertical, 8)
+    }
+}
+#endif
+
+// MARK: - watchOS row
+
+#if os(watchOS)
 /// The watchOS browse row: pushes a definition pane. A direct `NavigationLink`
 /// destination is used rather than value-based navigation, which is unreliable
 /// from a pushed view on watchOS.
@@ -166,78 +223,6 @@ private struct WatchBrowseRow: View {
             Text(headword.titleCased)
                 .font(.system(.body, design: .serif))
         }
-    }
-}
-#endif
-
-// MARK: - Index bar
-
-/// Collects each visible section header's vertical offset so the index bar can
-/// highlight the current scroll position.
-private struct SectionOffsetsKey: PreferenceKey {
-    static var defaultValue: [String: CGFloat] = [:]
-    static func reduce(value: inout [String: CGFloat], nextValue: () -> [String: CGFloat]) {
-        value.merge(nextValue(), uniquingKeysWith: { _, new in new })
-    }
-}
-
-#if os(iOS)
-/// A Contacts-style A–Z index with its own background. Tapping or dragging
-/// reports the letter under the finger; the current scroll position is
-/// highlighted, and a bubble shows the active letter while scrubbing.
-private struct SectionIndexBar: View {
-    let letters: [String]
-    let current: String?
-    let onSelect: (String) -> Void
-
-    @State private var isDragging = false
-    @State private var activeLetter: String?
-
-    var body: some View {
-        GeometryReader { geo in
-            let rowHeight = geo.size.height / CGFloat(max(letters.count, 1))
-            VStack(spacing: 0) {
-                ForEach(letters, id: \.self) { letter in
-                    Text(letter)
-                        .font(.system(size: 11, weight: current == letter ? .bold : .semibold))
-                        .foregroundStyle(current == letter ? Color.accentColor : Color.secondary)
-                        .scaleEffect(current == letter ? 1.3 : 1.0)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.vertical, 8)
-            .background(.ultraThinMaterial, in: Capsule())
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { value in
-                        isDragging = true
-                        let index = min(max(Int(value.location.y / rowHeight), 0), letters.count - 1)
-                        let letter = letters[index]
-                        if letter != activeLetter {
-                            activeLetter = letter
-                            onSelect(letter)
-                        }
-                    }
-                    .onEnded { _ in
-                        isDragging = false
-                        activeLetter = nil
-                    }
-            )
-            .overlay(alignment: .center) {
-                if isDragging, let activeLetter {
-                    Text(activeLetter)
-                        .font(.system(size: 34, weight: .bold, design: .serif))
-                        .frame(width: 72, height: 72)
-                        .background(.ultraThinMaterial, in: Circle())
-                        .offset(x: -70)
-                }
-            }
-        }
-        .frame(width: 22)
-        .padding(.trailing, 6)
-        .padding(.vertical, 10)
     }
 }
 #endif
