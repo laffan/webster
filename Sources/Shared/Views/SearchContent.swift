@@ -4,8 +4,8 @@ import UIKit
 #endif
 
 /// Search screen contents. Expects to be hosted inside a `NavigationStack`
-/// (each platform provides its own), so it declares a `navigationDestination`
-/// but no stack of its own.
+/// (each platform provides its own); result rows push a definition via a
+/// direct `NavigationLink`.
 ///
 /// iOS uses a custom search bar with a paste button; watchOS keeps the system
 /// `.searchable` field (which offers dictation/scribble and has no clipboard).
@@ -32,12 +32,11 @@ struct SearchContent: View {
 
     private var resultsList: some View {
         List(results) { entry in
-            NavigationLink(value: entry) {
+            NavigationLink {
+                DefinitionView(entry: entry, recordAs: .lookup)
+            } label: {
                 EntryRow(entry: entry)
             }
-        }
-        .navigationDestination(for: DictionaryEntry.self) { entry in
-            DefinitionView(entry: entry, recordAs: .lookup)
         }
         .overlay {
             if query.isEmpty {

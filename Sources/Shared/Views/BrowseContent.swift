@@ -1,12 +1,14 @@
 import SwiftUI
 
 /// Browse screen: every headword in one long list, divided into large
-/// alphabetical section headers. Tapping a word twirls its definition down
-/// inline. On iOS an A–Z index down the trailing edge jumps (and scrubs) to a
-/// section and highlights the current scroll position.
+/// alphabetical section headers. On iPhone/iPad a word twirls its definition
+/// down inline (one at a time); on watchOS it pushes a definition pane. iOS also
+/// gets an A–Z index down the trailing edge that jumps/scrubs to a section and
+/// highlights the current scroll position.
 struct BrowseContent: View {
     @EnvironmentObject private var store: DictionaryStore
     @State private var sections: [BrowseSection] = []
+    @State private var expandedID: Int?
 
     private let coordinateSpace = "browseScroll"
 
@@ -16,41 +18,19 @@ struct BrowseContent: View {
                 if sections.isEmpty {
                     ProgressView()
                 } else {
-                    List {
-                        ForEach(sections) { section in
-                            Section {
-                                ForEach(section.headwords) { headword in
-                                    BrowseRow(headword: headword)
-                                }
-                            } header: {
-                                sectionHeader(section.letter)
-                            }
-                            .id(section.letter)
-                        }
-                    }
-                    .coordinateSpace(name: coordinateSpace)
-                    #if os(watchOS)
-                    // The Watch pushes a definition pane instead of expanding
-                    // inline (DisclosureGroup is unavailable on watchOS anyway).
-                    .navigationDestination(for: Headword.self) { headword in
-                        if let entry = store.entry(id: headword.id) {
-                            DefinitionView(entry: entry, recordAs: .browse)
-                        }
-                    }
-                    #endif
+                    list
                     #if os(iOS)
-                    // Reading the offsets in an overlay builder keeps the current
-                    // section in sync with the scroll position without stashing
-                    // it in @State.
-                    .overlayPreferenceValue(SectionOffsetsKey.self) { offsets in
-                        SectionIndexBar(
-                            letters: sections.map(\.letter),
-                            current: Self.currentLetter(from: offsets)
-                        ) { letter in
-                            proxy.scrollTo(letter, anchor: .top)
+                        .coordinateSpace(name: coordinateSpace)
+                        .contentMargins(.trailing, 34, for: .scrollContent)
+                        .overlayPreferenceValue(SectionOffsetsKey.self) { offsets in
+                            SectionIndexBar(
+                                letters: sections.map(\.letter),
+                                current: Self.currentLetter(from: offsets)
+                            ) { letter in
+                                proxy.scrollTo(letter, anchor: .top)
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
-                    }
                     #endif
                 }
             }
@@ -60,6 +40,37 @@ struct BrowseContent: View {
                 }
             }
         }
+    }
+
+    private var list: some View {
+        List {
+            ForEach(sections) { section in
+                Section {
+                    ForEach(section.headwords) { headword in
+                        row(for: headword)
+                    }
+                } header: {
+                    sectionHeader(section.letter)
+                }
+                .id(section.letter)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func row(for headword: Headword) -> some View {
+        #if os(iOS)
+        InlineBrowseRow(
+            headword: headword,
+            isExpanded: expandedID == headword.id
+        ) {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                expandedID = (expandedID == headword.id) ? nil : headword.id
+            }
+        }
+        #else
+        WatchBrowseRow(headword: headword)
+        #endif
     }
 
     private func sectionHeader(_ letter: String) -> some View {
@@ -85,40 +96,23 @@ struct BrowseContent: View {
     }
 }
 
-/// A single browse row.
-///
-/// On iPhone/iPad the headword twirls its definition down inline; on watchOS
-/// (where `DisclosureGroup` is unavailable and the screen is tiny) it pushes a
-/// definition pane instead.
-private struct BrowseRow: View {
-    let headword: Headword
-
-    var body: some View {
-        #if os(iOS)
-        InlineBrowseRow(headword: headword)
-        #else
-        NavigationLink(value: headword) {
-            Text(headword.titleCased)
-                .font(.system(.body, design: .serif))
-        }
-        #endif
-    }
-}
+// MARK: - Rows
 
 #if os(iOS)
 /// The iPhone/iPad browse row: a custom disclosure that reveals the definition
-/// inline (custom rather than `DisclosureGroup` so it matches on both axes).
+/// inline. Expansion is driven by the parent so only one row opens at a time.
 private struct InlineBrowseRow: View {
     let headword: Headword
+    let isExpanded: Bool
+    let onToggle: () -> Void
 
     @EnvironmentObject private var store: DictionaryStore
     @EnvironmentObject private var recents: RecentsStore
-    @State private var isExpanded = false
     @State private var entry: DictionaryEntry?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Button(action: toggle) {
+        VStack(alignment: .leading, spacing: 0) {
+            Button(action: onToggle) {
                 HStack {
                     Text(headword.titleCased)
                         .font(.system(.body, design: .serif))
@@ -133,32 +127,50 @@ private struct InlineBrowseRow: View {
             .buttonStyle(.plain)
 
             if isExpanded {
-                if let entry {
-                    FormattedDefinitionView(definition: entry.definition)
-                        .padding(.bottom, 4)
-                } else {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
+                Group {
+                    if let entry {
+                        FormattedDefinitionView(definition: entry.definition)
+                    } else {
+                        ProgressView().frame(maxWidth: .infinity)
+                    }
                 }
+                .padding(.top, 10)
+                .padding(.bottom, 12)
+            }
+        }
+        .onChange(of: isExpanded) { _, expanded in
+            guard expanded else { return }
+            if entry == nil {
+                entry = store.entry(id: headword.id)
+            }
+            if let entry {
+                recents.record(entry.word, source: .browse)
             }
         }
     }
+}
+#else
+/// The watchOS browse row: pushes a definition pane. A direct `NavigationLink`
+/// destination is used rather than value-based navigation, which is unreliable
+/// from a pushed view on watchOS.
+private struct WatchBrowseRow: View {
+    let headword: Headword
+    @EnvironmentObject private var store: DictionaryStore
 
-    private func toggle() {
-        let willExpand = !isExpanded
-        withAnimation(.easeInOut(duration: 0.2)) {
-            isExpanded = willExpand
-        }
-        guard willExpand else { return }
-        if entry == nil {
-            entry = store.entry(id: headword.id)
-        }
-        if let entry {
-            recents.record(entry.word, source: .browse)
+    var body: some View {
+        NavigationLink {
+            if let entry = store.entry(id: headword.id) {
+                DefinitionView(entry: entry, recordAs: .browse)
+            }
+        } label: {
+            Text(headword.titleCased)
+                .font(.system(.body, design: .serif))
         }
     }
 }
 #endif
+
+// MARK: - Index bar
 
 /// Collects each visible section header's vertical offset so the index bar can
 /// highlight the current scroll position.
@@ -170,9 +182,9 @@ private struct SectionOffsetsKey: PreferenceKey {
 }
 
 #if os(iOS)
-/// A Contacts-style A–Z index. Tapping or dragging reports the letter under the
-/// finger; the current scroll position is highlighted, and a bubble shows the
-/// active letter while scrubbing.
+/// A Contacts-style A–Z index with its own background. Tapping or dragging
+/// reports the letter under the finger; the current scroll position is
+/// highlighted, and a bubble shows the active letter while scrubbing.
 private struct SectionIndexBar: View {
     let letters: [String]
     let current: String?
@@ -194,6 +206,8 @@ private struct SectionIndexBar: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.vertical, 8)
+            .background(.ultraThinMaterial, in: Capsule())
             .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0)
@@ -217,12 +231,12 @@ private struct SectionIndexBar: View {
                         .font(.system(size: 34, weight: .bold, design: .serif))
                         .frame(width: 72, height: 72)
                         .background(.ultraThinMaterial, in: Circle())
-                        .offset(x: -64)
+                        .offset(x: -70)
                 }
             }
         }
-        .frame(width: 16)
-        .padding(.trailing, 12)
+        .frame(width: 22)
+        .padding(.trailing, 6)
         .padding(.vertical, 10)
     }
 }

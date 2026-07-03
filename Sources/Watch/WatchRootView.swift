@@ -1,8 +1,7 @@
 import SwiftUI
 
 /// Apple Watch root: a single navigation stack whose menu pushes each of the
-/// shared screens. The shared content views declare their own
-/// `navigationDestination`, which resolves within this stack.
+/// shared screens; those screens push definition panes via `NavigationLink`.
 struct WatchRootView: View {
     var body: some View {
         NavigationStack {
