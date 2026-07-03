@@ -29,6 +29,15 @@ struct BrowseContent: View {
                         }
                     }
                     .coordinateSpace(name: coordinateSpace)
+                    #if os(watchOS)
+                    // The Watch pushes a definition pane instead of expanding
+                    // inline (DisclosureGroup is unavailable on watchOS anyway).
+                    .navigationDestination(for: Headword.self) { headword in
+                        if let entry = store.entry(id: headword.id) {
+                            DefinitionView(entry: entry, recordAs: .browse)
+                        }
+                    }
+                    #endif
                     #if os(iOS)
                     // Reading the offsets in an overlay builder keeps the current
                     // section in sync with the scroll position without stashing
@@ -76,8 +85,30 @@ struct BrowseContent: View {
     }
 }
 
-/// A single browse row: the headword, twirling down to its definition inline.
+/// A single browse row.
+///
+/// On iPhone/iPad the headword twirls its definition down inline; on watchOS
+/// (where `DisclosureGroup` is unavailable and the screen is tiny) it pushes a
+/// definition pane instead.
 private struct BrowseRow: View {
+    let headword: Headword
+
+    var body: some View {
+        #if os(iOS)
+        InlineBrowseRow(headword: headword)
+        #else
+        NavigationLink(value: headword) {
+            Text(headword.titleCased)
+                .font(.system(.body, design: .serif))
+        }
+        #endif
+    }
+}
+
+#if os(iOS)
+/// The iPhone/iPad browse row: a custom disclosure that reveals the definition
+/// inline (custom rather than `DisclosureGroup` so it matches on both axes).
+private struct InlineBrowseRow: View {
     let headword: Headword
 
     @EnvironmentObject private var store: DictionaryStore
@@ -86,32 +117,48 @@ private struct BrowseRow: View {
     @State private var entry: DictionaryEntry?
 
     var body: some View {
-        DisclosureGroup(isExpanded: $isExpanded) {
-            Group {
+        VStack(alignment: .leading, spacing: 6) {
+            Button(action: toggle) {
+                HStack {
+                    Text(headword.titleCased)
+                        .font(.system(.body, design: .serif))
+                    Spacer(minLength: 8)
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            if isExpanded {
                 if let entry {
                     FormattedDefinitionView(definition: entry.definition)
-                        .padding(.top, 4)
-                        .padding(.bottom, 6)
+                        .padding(.bottom, 4)
                 } else {
                     ProgressView()
                         .frame(maxWidth: .infinity)
                 }
             }
-        } label: {
-            Text(headword.titleCased)
-                .font(.system(.body, design: .serif))
         }
-        .onChange(of: isExpanded) { _, expanded in
-            guard expanded else { return }
-            if entry == nil {
-                entry = store.entry(id: headword.id)
-            }
-            if let entry {
-                recents.record(entry.word, source: .browse)
-            }
+    }
+
+    private func toggle() {
+        let willExpand = !isExpanded
+        withAnimation(.easeInOut(duration: 0.2)) {
+            isExpanded = willExpand
+        }
+        guard willExpand else { return }
+        if entry == nil {
+            entry = store.entry(id: headword.id)
+        }
+        if let entry {
+            recents.record(entry.word, source: .browse)
         }
     }
 }
+#endif
 
 /// Collects each visible section header's vertical offset so the index bar can
 /// highlight the current scroll position.
