@@ -4,6 +4,7 @@ import Combine
 /// How a word entered the recents history.
 enum RecentSource: String, Codable, CaseIterable {
     case lookup   // viewed from Search
+    case browse   // expanded in the Browse list
     case random   // surfaced in the Random screen
 }
 
@@ -35,6 +36,7 @@ final class RecentsStore: ObservableObject {
     }
 
     var lookups: [RecentItem] { items.filter { $0.source == .lookup } }
+    var browses: [RecentItem] { items.filter { $0.source == .browse } }
     var randoms: [RecentItem] { items.filter { $0.source == .random } }
 
     /// Records a visit, moving the word to the top and de-duplicating. If the

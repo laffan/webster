@@ -1,18 +1,30 @@
 import SwiftUI
 
-/// Random screen contents: shows one random definition with a shuffle control.
+/// Random screen contents: shows two random definitions with a shuffle control.
 /// Each word shown is recorded in the Random section of recents.
 struct RandomContent: View {
     @EnvironmentObject private var store: DictionaryStore
     @EnvironmentObject private var recents: RecentsStore
-    @State private var entry: DictionaryEntry?
+    @State private var entries: [DictionaryEntry] = []
+
+    private let wordCount = 2
 
     var body: some View {
         Group {
-            if let entry {
-                DefinitionBody(entry: entry)
+            if entries.isEmpty {
+                ContentUnavailableView("No words yet", systemImage: "shuffle")
             } else {
-                ContentUnavailableView("No word yet", systemImage: "shuffle")
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                            if index > 0 {
+                                Divider().padding(.vertical, 16)
+                            }
+                            DefinitionContent(entry: entry)
+                        }
+                    }
+                    .padding()
+                }
             }
         }
         #if os(iOS)
@@ -28,13 +40,23 @@ struct RandomContent: View {
             }
         }
         .onAppear {
-            if entry == nil { shuffle() }
+            if entries.isEmpty { shuffle() }
         }
     }
 
     private func shuffle() {
-        guard let next = store.randomEntry() else { return }
-        entry = next
-        recents.record(next.word, source: .random)
+        var picked: [DictionaryEntry] = []
+        var attempts = 0
+        while picked.count < wordCount && attempts < wordCount * 10 {
+            attempts += 1
+            guard let candidate = store.randomEntry() else { break }
+            if !picked.contains(where: { $0.id == candidate.id }) {
+                picked.append(candidate)
+            }
+        }
+        entries = picked
+        for entry in picked {
+            recents.record(entry.word, source: .random)
+        }
     }
 }

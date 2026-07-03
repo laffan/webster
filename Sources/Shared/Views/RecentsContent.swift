@@ -20,6 +20,17 @@ struct RecentsContent: View {
                 }
             }
 
+            if !recents.browses.isEmpty {
+                Section("Browse") {
+                    ForEach(entries(for: recents.browses)) { entry in
+                        NavigationLink(value: entry) {
+                            EntryRow(entry: entry)
+                        }
+                    }
+                    .onDelete { recents.remove(source: .browse, atOffsets: $0) }
+                }
+            }
+
             if !recents.randoms.isEmpty {
                 Section("Random") {
                     ForEach(entries(for: recents.randoms)) { entry in
