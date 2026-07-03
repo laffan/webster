@@ -9,9 +9,14 @@ and precision that modern dictionaries have sanded away. This app puts all
 
 ## Features
 
-- **Search** — instant prefix search across every headword.
+- **Search** — instant prefix search across every headword. When the field is
+  empty it lists your recent searches (swipe to delete, or to favorite).
+- **Browse** — read the dictionary a letter at a time, every definition laid out
+  in full like a printed page, with an A–Z rail plus a proportional section rail
+  (Pa, Pe, Pn…) that doubles as a scroll-position indicator.
 - **Random** — pull up a random entry to go exploring; shuffle for another.
-- **Recent** — everything you've looked up, newest first, with swipe-to-delete.
+- **Favorites** — touch and hold any word to flag it; the Favorites tab keeps
+  them together.
 - **Fully offline** — the entire dictionary ships inside the app as a prebuilt
   SQLite database. No network, ever.
 - **Runs everywhere** — one shared SwiftUI codebase targeting iPhone, iPad, and
@@ -24,8 +29,8 @@ Sources/
   Shared/            Code compiled into BOTH the iOS and watchOS targets
     Models/          DictionaryEntry
     Data/            DictionaryDatabase — read-only SQLite access (import SQLite3)
-    Store/           DictionaryStore (DB facade) + RecentsStore (persistence)
-    Views/           SearchContent, RandomContent, RecentsContent, DefinitionView…
+    Store/           DictionaryStore (DB facade) + HistoryStore, FavoritesStore
+    Views/           SearchContent, BrowseContent, FavoritesContent, DefinitionView…
     Resources/       dictionary.sqlite  ← the bundled dictionary
   iOS/               iPhone/iPad entry point + tab navigation
   Watch/             Apple Watch entry point + navigation

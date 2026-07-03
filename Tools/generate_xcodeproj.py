@@ -35,7 +35,6 @@ SHARED_SWIFT = [
     "Sources/Shared/Views/SearchContent.swift",
     "Sources/Shared/Views/BrowseContent.swift",
     "Sources/Shared/Views/RandomContent.swift",
-    "Sources/Shared/Views/HistoryContent.swift",
     "Sources/Shared/Views/FavoritesContent.swift",
 ]
 SHARED_RESOURCE = "Sources/Shared/Resources/dictionary.sqlite"
@@ -199,7 +198,6 @@ views_g = make_group("Views", [
     file_refs["Sources/Shared/Views/SearchContent.swift"],
     file_refs["Sources/Shared/Views/BrowseContent.swift"],
     file_refs["Sources/Shared/Views/RandomContent.swift"],
-    file_refs["Sources/Shared/Views/HistoryContent.swift"],
     file_refs["Sources/Shared/Views/FavoritesContent.swift"],
 ])
 resources_g = make_group("Resources", [file_refs[SHARED_RESOURCE]])

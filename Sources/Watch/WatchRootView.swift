@@ -29,12 +29,6 @@ struct WatchRootView: View {
                 } label: {
                     Label("Favorites", systemImage: "star")
                 }
-
-                NavigationLink {
-                    HistoryContent()
-                } label: {
-                    Label("History", systemImage: "clock")
-                }
             }
             .navigationTitle("Webster")
         }

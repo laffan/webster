@@ -18,9 +18,9 @@ struct HistoryItem: Identifiable, Codable, Hashable {
 /// Tracks seen headwords, most-recent first, persisted per device.
 ///
 /// Each word is remembered once (the newest encounter wins) and tagged with its
-/// `source` so the History screen can split it into "Lookup" and "Random"
-/// sections. The display entries are re-resolved from the database on demand so
-/// we never persist stale definition text.
+/// `source`. Looked-up words surface as "Recent Searches" in the Search tab when
+/// the field is empty. Display entries are re-resolved from the database on
+/// demand so we never persist stale definition text.
 @MainActor
 final class HistoryStore: ObservableObject {
     @Published private(set) var items: [HistoryItem] = []
@@ -37,9 +37,8 @@ final class HistoryStore: ObservableObject {
         load()
     }
 
+    /// Recently looked-up words (surfaced in the Search tab when it is empty).
     var lookups: [HistoryItem] { items.filter { $0.source == .lookup } }
-    var browses: [HistoryItem] { items.filter { $0.source == .browse } }
-    var randoms: [HistoryItem] { items.filter { $0.source == .random } }
 
     /// Records a visit, moving the word to the top and de-duplicating. If the
     /// word was already present it adopts the new source.
@@ -56,11 +55,10 @@ final class HistoryStore: ObservableObject {
         persist()
     }
 
-    /// Removes items at `offsets` within the given section.
-    func remove(source: HistorySource, atOffsets offsets: IndexSet) {
-        let section = items.filter { $0.source == source }
-        let wordsToRemove = Set(offsets.map { section[$0].word })
-        items.removeAll { $0.source == source && wordsToRemove.contains($0.word) }
+    /// Removes a single word regardless of its source.
+    func remove(word rawWord: String) {
+        let word = rawWord.lowercased()
+        items.removeAll { $0.word == word }
         persist()
     }
 

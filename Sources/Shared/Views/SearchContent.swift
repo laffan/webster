@@ -11,6 +11,8 @@ import UIKit
 /// `.searchable` field (which offers dictation/scribble and has no clipboard).
 struct SearchContent: View {
     @EnvironmentObject private var store: DictionaryStore
+    @EnvironmentObject private var history: HistoryStore
+    @EnvironmentObject private var favorites: FavoritesStore
     @State private var query = ""
     @State private var results: [DictionaryEntry] = []
 
@@ -31,21 +33,23 @@ struct SearchContent: View {
     }
 
     private var resultsList: some View {
-        List(results) { entry in
-            NavigationLink {
-                DefinitionView(entry: entry, recordAs: .lookup)
-            } label: {
-                EntryRow(entry: entry)
+        List {
+            if query.isEmpty {
+                recentSection
+            } else {
+                ForEach(results) { entry in
+                    resultRow(entry)
+                }
             }
         }
         .overlay {
-            if query.isEmpty {
+            if query.isEmpty && history.lookups.isEmpty {
                 ContentUnavailableView(
                     "Webster's Dictionary",
                     systemImage: "character.book.closed",
                     description: Text("Search \(store.entryCount.formatted()) definitions from the 1913 Revised Unabridged edition.")
                 )
-            } else if results.isEmpty {
+            } else if !query.isEmpty && results.isEmpty {
                 ContentUnavailableView.search(text: query)
             }
         }
@@ -55,6 +59,53 @@ struct SearchContent: View {
             try? await Task.sleep(for: .milliseconds(120))
             guard !Task.isCancelled else { return }
             results = store.search(query)
+        }
+    }
+
+    /// Recently looked-up words, shown when the field is empty. Swipe left to
+    /// remove, swipe right to favorite.
+    @ViewBuilder
+    private var recentSection: some View {
+        let recents = history.lookups.compactMap { store.entry(for: $0.word) }
+        if !recents.isEmpty {
+            Section {
+                ForEach(recents) { entry in
+                    resultRow(entry)
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                favorites.toggle(entry.word)
+                            } label: {
+                                let isFavorite = favorites.isFavorite(entry.word)
+                                Label(isFavorite ? "Unfavorite" : "Favorite",
+                                      systemImage: isFavorite ? "star.slash" : "star")
+                            }
+                            .tint(.yellow)
+                        }
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                history.remove(word: entry.word)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                }
+            } header: {
+                HStack {
+                    Text("Recent Searches")
+                    Spacer()
+                    Button("Clear") { history.clear() }
+                        .font(.caption)
+                        .textCase(nil)
+                }
+            }
+        }
+    }
+
+    private func resultRow(_ entry: DictionaryEntry) -> some View {
+        NavigationLink {
+            DefinitionView(entry: entry, recordAs: .lookup)
+        } label: {
+            EntryRow(entry: entry)
         }
     }
 
