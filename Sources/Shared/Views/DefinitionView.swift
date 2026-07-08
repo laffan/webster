@@ -14,17 +14,18 @@ struct DefinitionContent: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            // Only the headword carries the touch-and-hold favorite menu, so the
+            // definition below stays plain, selectable text you can copy/paste.
             Text(entry.titleCased)
                 .font(headwordFont)
                 .fontWeight(.bold)
-                .selectableText()
+                .favoriteContextMenu(for: entry.word)
 
             Divider()
 
             FormattedDefinitionView(definition: entry.definition)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .favoriteContextMenu(for: entry.word)
     }
 }
 

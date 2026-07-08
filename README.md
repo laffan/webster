@@ -10,13 +10,19 @@ and precision that modern dictionaries have sanded away. This app puts all
 ## Features
 
 - **Search** — instant prefix search across every headword. When the field is
-  empty it lists your recent searches (swipe to delete, or to favorite).
-- **Browse** — read the dictionary a letter at a time, every definition laid out
-  in full like a printed page, with an A–Z rail plus a proportional section rail
-  (Pa, Pe, Pn…) that doubles as a scroll-position indicator.
-- **Random** — pull up a random entry to go exploring; shuffle for another.
-- **Favorites** — touch and hold any word to flag it; the Favorites tab keeps
-  them together.
+  empty it lists your recent searches (swipe to delete, or to favorite). On the
+  Watch, tap the field to type, scribble, or dictate a query.
+- **Browse** — on iPhone/iPad, read the dictionary a letter at a time, every
+  definition laid out in full like a printed page, with an A–Z rail plus a
+  proportional section rail (Pa, Pe, Pn…) that doubles as a scroll-position
+  indicator. On the Watch it's a quick drill-down — first letter, then
+  two-letter prefix, then word — so the crown never has to spin through the
+  whole dictionary, with each definition on its own page.
+- **Random** — the screen the app opens on: pull up a random entry to go
+  exploring; shuffle for another.
+- **Favorites** — touch and hold a headword to flag it; the Favorites tab keeps
+  them together. Definition text stays plain and selectable, so you can copy a
+  passage without triggering the flag.
 - **Fully offline** — the entire dictionary ships inside the app as a prebuilt
   SQLite database. No network, ever.
 - **Runs everywhere** — one shared SwiftUI codebase targeting iPhone, iPad, and

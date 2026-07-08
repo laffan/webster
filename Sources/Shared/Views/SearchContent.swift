@@ -7,8 +7,9 @@ import UIKit
 /// (each platform provides its own); result rows push a definition via a
 /// direct `NavigationLink`.
 ///
-/// iOS uses a custom search bar with a paste button; watchOS keeps the system
-/// `.searchable` field (which offers dictation/scribble and has no clipboard).
+/// iOS uses a custom search bar with a paste button; watchOS shows an explicit
+/// text field at the top of the list (tapping it opens the watch's
+/// scribble/dictation/keyboard input).
 struct SearchContent: View {
     @EnvironmentObject private var store: DictionaryStore
     @EnvironmentObject private var history: HistoryStore
@@ -27,13 +28,21 @@ struct SearchContent: View {
         }
         #else
         resultsList
-            .searchable(text: $query, prompt: searchPrompt)
-            .searchFieldStyling()
         #endif
     }
 
     private var resultsList: some View {
         List {
+            #if os(watchOS)
+            // watchOS: an explicit, tappable field. `.searchable` does not
+            // reliably surface a search box on a pushed watch view, which left
+            // the screen with no way to type a query at all. Tapping this opens
+            // the system text-entry screen (scribble, dictation, or keyboard).
+            TextField(searchPrompt, text: $query)
+                .searchFieldStyling()
+                .submitLabel(.search)
+            #endif
+
             if query.isEmpty {
                 recentSection
             } else {
@@ -43,6 +52,9 @@ struct SearchContent: View {
             }
         }
         .overlay {
+            // On watchOS the field lives inside the list, so a full-screen
+            // overlay would cover it; keep the empty-state art to iOS only.
+            #if os(iOS)
             if query.isEmpty && history.lookups.isEmpty {
                 ContentUnavailableView(
                     "Webster's Dictionary",
@@ -52,6 +64,7 @@ struct SearchContent: View {
             } else if !query.isEmpty && results.isEmpty {
                 ContentUnavailableView.search(text: query)
             }
+            #endif
         }
         // Debounce: re-run only after typing pauses briefly; `.task(id:)`
         // cancels the previous query on each keystroke.
@@ -120,6 +133,7 @@ struct SearchContent: View {
 private struct SearchBar: View {
     @Binding var query: String
     let placeholder: String
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         HStack(spacing: 8) {
@@ -131,6 +145,7 @@ private struct SearchBar: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .submitLabel(.search)
+                .focused($isFocused)
 
             if !query.isEmpty {
                 Button {
@@ -158,6 +173,20 @@ private struct SearchBar: View {
         .padding(.vertical, 9)
         .background(Color(.secondarySystemBackground),
                     in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        // The system keyboard has no dismiss key, so give it one: an accessory
+        // bar with a button that resigns focus. Without this the keyboard covers
+        // the tab bar with no way to get it back.
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button {
+                    isFocused = false
+                } label: {
+                    Label("Hide Keyboard", systemImage: "keyboard.chevron.compact.down")
+                }
+                .accessibilityLabel("Hide Keyboard")
+            }
+        }
     }
 }
 #endif

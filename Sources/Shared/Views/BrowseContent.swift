@@ -84,21 +84,21 @@ struct BrowseContent: View {
         .navigationBarTitleDisplayMode(.inline)
     }
     #else
+    // watchOS Browse is a drill-down that mirrors the iOS columns so the digital
+    // crown never has to scroll all ~100k entries at once: first letter →
+    // two-letter prefix → words → definition (each definition on its own page).
     private var watchList: some View {
         List {
             ForEach(sections) { section in
-                Section {
-                    ForEach(section.headwords) { headword in
-                        WatchBrowseRow(headword: headword)
-                    }
-                } header: {
+                NavigationLink {
+                    WatchSubsectionList(section: section)
+                } label: {
                     Text(section.letter)
                         .font(.system(.title3, design: .serif).weight(.bold))
-                        .foregroundStyle(.primary)
-                        .textCase(nil)
                 }
             }
         }
+        .navigationTitle("Browse")
     }
     #endif
 }
@@ -265,18 +265,19 @@ private struct BrowseEntryView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // Only the headword carries the touch-and-hold favorite menu, so the
+            // definition below stays plain, selectable text you can copy/paste.
             Text(entry.titleCased)
                 .font(.system(.title3, design: .serif).weight(.bold))
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
-                .selectableText()
+                .favoriteContextMenu(for: entry.word)
 
             if let parsed {
                 FormattedDefinitionView(parsed: parsed)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .favoriteContextMenu(for: entry.word)
         .task {
             if parsed == nil {
                 parsed = ParsedDefinition.parse(entry.definition)
@@ -299,7 +300,7 @@ private struct LetterSidebar: View {
             .minimumScaleFactor(0.2)
             .lineLimit(1)
             .foregroundStyle(.primary)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding(24)
     }
 }
@@ -429,9 +430,81 @@ private struct LetterRail: View {
 }
 #endif
 
-// MARK: - watchOS row
+// MARK: - watchOS drill-down browse
 
 #if os(watchOS)
+/// A run of headwords sharing a lowercased two-letter prefix (e.g. "Ab"), the
+/// middle rung of the watch Browse drill-down.
+private struct WatchPrefixGroup: Identifiable {
+    let label: String          // e.g. "Ab"
+    let headwords: [Headword]
+    var id: String { label }
+
+    /// Groups one letter's already-sorted headwords by their two-letter prefix,
+    /// preserving alphabetical order.
+    static func make(from headwords: [Headword]) -> [WatchPrefixGroup] {
+        var result: [WatchPrefixGroup] = []
+        var current: [Headword] = []
+        var currentPrefix: String?
+        for headword in headwords {
+            let prefix = String(headword.word.lowercased().prefix(2))
+            if prefix != currentPrefix {
+                if let currentPrefix, !current.isEmpty {
+                    result.append(WatchPrefixGroup(label: currentPrefix.capitalized,
+                                                   headwords: current))
+                }
+                current = []
+                currentPrefix = prefix
+            }
+            current.append(headword)
+        }
+        if let currentPrefix, !current.isEmpty {
+            result.append(WatchPrefixGroup(label: currentPrefix.capitalized,
+                                           headwords: current))
+        }
+        return result
+    }
+}
+
+/// Second rung: the two-letter prefixes within a single letter (Aa, Ab, Ac…).
+private struct WatchSubsectionList: View {
+    let section: BrowseSection
+
+    private var groups: [WatchPrefixGroup] {
+        WatchPrefixGroup.make(from: section.headwords)
+    }
+
+    var body: some View {
+        List {
+            ForEach(groups) { group in
+                NavigationLink {
+                    WatchWordList(title: group.label, headwords: group.headwords)
+                } label: {
+                    Text(group.label)
+                        .font(.system(.title3, design: .serif))
+                }
+            }
+        }
+        .navigationTitle(section.letter)
+    }
+}
+
+/// Third rung: the words sharing a two-letter prefix. Each pushes its full
+/// definition onto its own page.
+private struct WatchWordList: View {
+    let title: String
+    let headwords: [Headword]
+
+    var body: some View {
+        List {
+            ForEach(headwords) { headword in
+                WatchBrowseRow(headword: headword)
+            }
+        }
+        .navigationTitle(title)
+    }
+}
+
 /// The watchOS browse row: pushes a definition pane. A direct `NavigationLink`
 /// destination is used rather than value-based navigation, which is unreliable
 /// from a pushed view on watchOS.
